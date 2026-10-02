@@ -175,3 +175,33 @@ it("Expone tick, proceso en CPU, Listos, en espera, Bloqueados, Terminados y map
     expect(simulador.getMapaMemoria().map((bloque) => bloque.getPid())).toEqual(["", "P2", "P3", "P4", ""]);
     expect(simulador.getMapaMemoria().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100, 600]);
   });
+it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en CPU", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(600, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 300, 5);
+    simulador.registrarProcesoConES("P2", 200, 6, 2, 3);
+    simulador.registrarProceso("P3", 300, 4);
+
+    Array.from({ length: 25 }).forEach(() => {
+      simulador.avanzarTick();
+      const ubicados = [
+        ...simulador.getEnCpu(),
+        ...simulador.getListos(),
+        ...simulador.getEnEspera(),
+        ...simulador.getBloqueados(),
+        ...simulador.getTerminados(),
+      ].map((proceso) => proceso.getPid());
+      const bloques = simulador.getMapaMemoria();
+      const inicios = bloques.map((bloque) => bloque.getInicio());
+      const finales = bloques.map((bloque) => bloque.getInicio() + bloque.getTamanio());
+
+      expect(simulador.getEnCpu().length).toBeLessThanOrEqual(1);
+      expect(ubicados.sort()).toEqual(["P1", "P2", "P3"]);
+      expect(inicios).toEqual([0, ...finales.slice(0, -1)]);
+    });
+  });
+});
+}
