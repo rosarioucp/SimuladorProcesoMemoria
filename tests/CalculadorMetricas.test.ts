@@ -21,4 +21,23 @@ describe("Métricas y límites", () => {
     expect(calculador.fragmentacionExterna(memoria)).toBe(25);
   });
 
+  it("La memoria llena hay ocupación 100%, libre 0, mayor bloque 0 y fragmentación 0%", () => {
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), new Validador());
+    const calculador = new CalculadorMetricas();
+
+    memoria.asignar("P1", 1024);
+
+    expect(calculador.ocupacionMemoria(memoria)).toBe(100);
+    expect(calculador.memoriaLibreTotal(memoria)).toBe(0);
+    expect(calculador.mayorBloqueLibre(memoria)).toBe(0);
+    expect(calculador.fragmentacionExterna(memoria)).toBe(0);
+  });
+
+  it("El tick en 0 la utilización de CPU es 0% y después es ticks ocupados sobre ticks transcurridos", () => {
+    const calculador = new CalculadorMetricas();
+
+    expect(calculador.utilizacionCpu(0, 0)).toBe(0);
+    expect(calculador.utilizacionCpu(3, 4)).toBe(75);
+  });
+});
   
