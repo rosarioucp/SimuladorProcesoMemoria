@@ -107,7 +107,7 @@ export class Proceso implements IConsultarProceso, ICambiarEstado {
     this._validarEstado([EstadoProceso.Nuevo], "definir la E/S de");
     this._validador.validarEnteroPositivo(inicio, "El inicio de la E/S");
     this._validador.validarEnteroPositivo(duracion, "La duración de la E/S");
-    this._validador.validarCondicion(inicio < this._cpuTotal, "La E/S debe dispararse antes de que el proceso termine");
+    this._validador.validarCondicion(inicio < this._cpuTotal, "La E/S debe iniciarse antes de que el proceso termine");
     this._inicio = inicio;
     this._duracion = duracion;
   }
