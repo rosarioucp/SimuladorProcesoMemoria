@@ -1,0 +1,24 @@
+{
+  "name": "simuladorprocesomemoria",
+  "version": "1.0.0",
+  "description": "Este repositorio contiene una aplicación desarrollada en TypeScript que implementa un Simulador de Procesos y Memoria, diseñado bajo principios de Programación Orientada a Objetos, cuenta con características como:\r -Simulación de Procesos: Gestión de estados, ciclo de vida y planificación de procesos.\r -Gestión de Memoria: Simulación de asignación y administración de espacio de memoria.\r -Pruebas Unitarias: Cobertura de código robusta mediante suites de pruebas automatizadas.\r Los pasos para instalar son:\r Ejecutar en la terminal \r 1- Clonar el repositorio: git clone \r 2-Instalar dependencias: npm install\r 3-Correr los tests: npm test\r 4-Ver cobertura: npm run coverage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosarioucp/SimuladorProcesoMemoria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rosarioucp/SimuladorProcesoMemoria/issues"
+  },
+  "homepage": "https://github.com/rosarioucp/SimuladorProcesoMemoria#readme",
+  "devDependencies": {
+    "vitest": "^5.0.3"
+  }
+}
