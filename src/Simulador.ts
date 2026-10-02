@@ -56,5 +56,37 @@ constructor(
     this._enEspera.push(proceso);
   }
 
+  //avances del tick//
+   public avanzarTick(): void {
+    this._faseAdmision();
+    this._faseBloqueados();
+    this._faseEjecucion();
+    this._tick = this._tick + 1;
+  }
+
+  private _faseAdmision(): void {
+    const admitidos = this._enEspera.filter((proceso) => this._memoria.asignar(proceso.getPid(), proceso.getMemoria()));
+    admitidos.forEach((proceso) => proceso.admitir());
+    admitidos.forEach((proceso) => this._planificador.encolar(proceso));
+    this._enEspera = this._enEspera.filter((proceso) => !admitidos.includes(proceso));
+    this._enEspera.forEach((proceso) => proceso.esperarMemoria());
+  }
+
+  private _faseBloqueados(): void {
+    this._bloqueados.forEach((proceso) => proceso.avanzarBloqueo());
+    const vencidos = this._bloqueados.filter((proceso) => proceso.getBloqueoRestante() === 0);
+    vencidos.forEach((proceso) => proceso.desbloquear());
+    vencidos.forEach((proceso) => this._planificador.encolar(proceso));
+    this._bloqueados = this._bloqueados.filter((proceso) => !vencidos.includes(proceso));
+  }
+
+  private _faseEjecucion(): void {
+    this._planificador.ejecutarTick();
+    const terminados = this._planificador.getTerminadosDelTick();
+    terminados.forEach((proceso) => this._memoria.liberar(proceso.getPid()));
+    this._terminados.push(...terminados);
+    this._bloqueados.push(...this._planificador.getBloqueadosDelTick());
+  }
+
   
   
