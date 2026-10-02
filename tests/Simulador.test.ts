@@ -33,7 +33,7 @@ describe("Prueba la configuración y registro"), () => {
     expect(() => new PlanificadorRoundRobin(0, validador)).toThrow("El quantum debe ser mayor que cero");
   });
 
-  it("Registrar un proceso Nuevo con CPU restante igual al total y contadores en cero"), () => {
+  it("Registrar un proceso Nuevo con CPU restante igual al total y contadores en cero", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -41,3 +41,10 @@ describe("Prueba la configuración y registro"), () => {
 
     simulador.registrarProceso("P1", 200, 5);
     const procesos = simulador.getProcesos();
+    expect(procesos.map((proceso) => proceso.getPid())).toEqual(["P1"]);
+    expect(procesos.map((proceso) => proceso.getMemoria())).toEqual([200]);
+    expect(procesos.map((proceso) => proceso.getCpuRestante())).toEqual([5]);
+    expect(procesos.map((proceso) => proceso.getQuantumConsumido())).toEqual([0]);
+    expect(procesos.map((proceso) => proceso.getBloqueoRestante())).toEqual([0]);
+    expect(procesos.map((proceso) => proceso.getEstado().getNombre())).toEqual(["Nuevo"]);
+  });
