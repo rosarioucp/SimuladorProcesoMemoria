@@ -25,5 +25,19 @@ describe("Prueba la configuración y registro"), () => {
     expect(simulador.getTerminados()).toEqual([]);
     expect(simulador.getCambiosContexto()).toBe(0);
   });
+  it("Rechazar una memoria total o un quantum inválidos", () => {
+    const validador = new Validador();
 
-  
+    expect(() => new AdministradorMemoria(0, new PoliticaFirstFit(), validador)).toThrow("La memoria total debe ser mayor que cero");
+    expect(() => new AdministradorMemoria(10.5, new PoliticaFirstFit(), validador)).toThrow("La memoria total debe ser un número entero");
+    expect(() => new PlanificadorRoundRobin(0, validador)).toThrow("El quantum debe ser mayor que cero");
+  });
+
+  it("Registrar un proceso Nuevo con CPU restante igual al total y contadores en cero"), () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 200, 5);
+    const procesos = simulador.getProcesos();
