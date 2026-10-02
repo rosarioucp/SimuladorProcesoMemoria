@@ -19,6 +19,7 @@ constructor(memoriaTotal: number, politica: IElegirBloque, validador: IValidar) 
     this._bloques = [this._crearBloque(0, memoriaTotal, BloqueMemoria.Libre)];
   }
 
+
   //consultas sobre la memoria//
 
   public getMemoriaTotal(): number {
@@ -67,3 +68,21 @@ constructor(memoriaTotal: number, politica: IElegirBloque, validador: IValidar) 
     const sinFusionar = [actual].slice(fusionados.length);
     return [...anteriores, ...fusionados, ...sinFusionar];
   }
+
+  //metodos para no repetir codigo//
+ private _bloquesDe(pid: string): IGuardar[] {
+    return this._bloques.filter((bloque) => bloque.getPid() === pid);
+  }
+
+  private _crearBloque(inicio: number, tamanio: number, pid: string): IGuardar {
+    return new BloqueMemoria(inicio, tamanio, pid, this._validador);
+  }
+
+  private _reemplazar(original: IGuardar, nuevos: IGuardar[]): void {
+    const posicion = this._bloques.indexOf(original);
+    const anteriores = this._bloques.slice(0, posicion);
+    const posteriores = this._bloques.slice(posicion + 1);
+    this._bloques = [...anteriores, ...nuevos, ...posteriores];
+  }
+}
+  
