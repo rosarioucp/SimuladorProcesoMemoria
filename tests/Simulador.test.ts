@@ -48,3 +48,27 @@ describe("Prueba la configuración y registro"), () => {
     expect(procesos.map((proceso) => proceso.getBloqueoRestante())).toEqual([0]);
     expect(procesos.map((proceso) => proceso.getEstado().getNombre())).toEqual(["Nuevo"]);
   });
+
+   it("RF02: rechaza los datos inválidos de un proceso", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    expect(() => simulador.registrarProceso("", 100, 3)).toThrow("El PID no puede estar vacío");
+    expect(() => simulador.registrarProceso("P1", 0, 3)).toThrow("La memoria requerida debe ser mayor que cero");
+    expect(() => simulador.registrarProceso("P1", 100, 1.5)).toThrow("El tiempo de CPU debe ser un número entero");
+    expect(simulador.getProcesos()).toEqual([]);
+  });
+
+  it("Rechazar un PID repetido", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 100, 3);
+
+    expect(() => simulador.registrarProceso("P1", 50, 1)).toThrow("El PID P1 ya está registrado");
+    expect(simulador.getProcesos().length).toBe(1);
+  });
