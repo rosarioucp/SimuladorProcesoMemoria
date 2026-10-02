@@ -1,9 +1,10 @@
 import { EstadoProceso } from "./EstadoProceso.js";
 import { IConsultarProceso } from "./IConsultarProceso.js";
+import {ICambiarEstado} from "./ICambiarEstado.js";
 import { IEstadoProceso } from "./IEstadoProceso.js";
 import { IValidar } from "./IValidar.js";
 
-export class Proceso implements IConsultarProceso{
+export class Proceso implements IConsultarProceso, ICambiarEstado {
   private readonly _pid: string;
   private readonly _memoria: number;
   private readonly _cpuTotal: number;
@@ -12,6 +13,7 @@ export class Proceso implements IConsultarProceso{
   private _estado: IEstadoProceso = EstadoProceso.Nuevo;
   private _quantumConsumido: number = 0;
   private _bloqueoRestante: number = 0;
+
 
   constructor(pid: string, memoria: number, cpuTotal: number, validador: IValidar) {
     validador.validarTextoNoVacio(pid, "El PID");
@@ -24,6 +26,7 @@ export class Proceso implements IConsultarProceso{
     this._validador = validador;
   }
 
+//Consulta sobre los procesos//
   public getPid(): string {
     return this._pid;
   }
@@ -50,6 +53,45 @@ export class Proceso implements IConsultarProceso{
 
   public getBloqueoRestante(): number {
     return this._bloqueoRestante;
+  }
+
+  //Acciones sobre los procesos//
+  public esperarMemoria(): void {
+    this._validarEstado([EstadoProceso.Nuevo, EstadoProceso.EsperandoMemoria], "poner en espera");
+    this._estado = EstadoProceso.EsperandoMemoria;
+  }
+
+  public admitir(): void {
+    this._validarEstado([EstadoProceso.Nuevo, EstadoProceso.EsperandoMemoria], "admitir");
+    this._estado = EstadoProceso.Listo;
+  }
+
+  public asignarCpu(): void {
+    this._validarEstado([EstadoProceso.Listo], "asignar CPU");
+    this._estado = EstadoProceso.Ejecutando;
+    this._quantumConsumido = 0;
+  }
+
+  public ejecutarTick(): void {
+    this._validarEstado([EstadoProceso.Ejecutando], "ejecutar");
+    this._cpuRestante = this._cpuRestante - 1;
+    this._quantumConsumido = this._quantumConsumido + 1;
+  }
+
+  public expulsar(): void {
+    this._validarEstado([EstadoProceso.Ejecutando], "expulsar");
+    this._estado = EstadoProceso.Listo;
+  }
+
+  public renovarQuantum(): void {
+    this._validarEstado([EstadoProceso.Ejecutando], "renovar el quantum de");
+    this._quantumConsumido = 0;
+  }
+
+  public finalizar(): void {
+    this._validarEstado([EstadoProceso.Ejecutando], "finalizar");
+    this._validador.validarCondicion(this._cpuRestante === 0, `${this._pid} todavía tiene CPU restante`);
+    this._estado = EstadoProceso.Terminado;
   }
 }
 
