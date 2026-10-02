@@ -72,3 +72,16 @@ describe("Prueba la configuración y registro"), () => {
     expect(() => simulador.registrarProceso("P1", 50, 1)).toThrow("El PID P1 ya está registrado");
     expect(simulador.getProcesos().length).toBe(1);
   });
+
+it("RF02: rechaza un proceso que pide más memoria que la total", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    expect(() => simulador.registrarProceso("P1", 1025, 3)).toThrow("P1 pide más memoria que la memoria total");
+    expect(simulador.getProcesos()).toEqual([]);
+  });
+
+
+
