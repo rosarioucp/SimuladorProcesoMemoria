@@ -85,3 +85,35 @@ describe("Test Coalescencia", () => {
     expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["A", "", "D"]);
     expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([100, 200, 100]);
   });
+
+it("Se fusiona con ambos bloques (izq y der) a la vez", () => {
+    const memoria = new AdministradorMemoria(400, new PoliticaFirstFit(), new Validador());
+    memoria.asignar("A", 100);
+    memoria.asignar("B", 100);
+    memoria.asignar("C", 100);
+    memoria.asignar("D", 100);
+
+    memoria.liberar("A");
+    memoria.liberar("C");
+    memoria.liberar("B");
+
+    expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["", "D"]);
+    expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([300, 100]);
+  });
+
+  it("Al liberar todos los procesos queda un único bloque libre del tamaño total", () => {
+    const memoria = new AdministradorMemoria(400, new PoliticaFirstFit(), new Validador());
+    memoria.asignar("A", 100);
+    memoria.asignar("B", 100);
+    memoria.asignar("C", 100);
+    memoria.asignar("D", 100);
+
+    memoria.liberar("C");
+    memoria.liberar("A");
+    memoria.liberar("D");
+    memoria.liberar("B");
+
+    expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([400]);
+    expect(memoria.getBloques().map((bloque) => bloque.estaLibre())).toEqual([true]);
+  });
+});
