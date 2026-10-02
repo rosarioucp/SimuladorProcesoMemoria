@@ -39,8 +39,8 @@ describe("Asignación de memoria", () => {
     expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["X", "", "B", "", "D", ""]);
     expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([80, 20, 100, 100, 100, 624]);
   });
-  
- it("RF04: si no hay hueco suficiente falla sin modificar los bloques, aunque la suma de libres alcance", () => {
+
+ it("Si no hay hueco suficiente falla sin modificar los bloques, aunque la suma de libres alcance", () => {
     const memoria = new AdministradorMemoria(400, new PoliticaFirstFit(), new Validador());
     memoria.asignar("A", 100);
     memoria.asignar("B", 100);
@@ -56,3 +56,32 @@ describe("Asignación de memoria", () => {
     expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100]);
   });
 });
+
+describe("Test Coalescencia", () => {
+  it("Se fusiona con el bloque izquierdo", () => {
+    const memoria = new AdministradorMemoria(400, new PoliticaFirstFit(), new Validador());
+    memoria.asignar("A", 100);
+    memoria.asignar("B", 100);
+    memoria.asignar("C", 100);
+    memoria.asignar("D", 100);
+
+    memoria.liberar("A");
+    memoria.liberar("B");
+
+    expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["", "C", "D"]);
+    expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([200, 100, 100]);
+  });
+
+  it("Se fusiona con el bloque derecho", () => {
+    const memoria = new AdministradorMemoria(400, new PoliticaFirstFit(), new Validador());
+    memoria.asignar("A", 100);
+    memoria.asignar("B", 100);
+    memoria.asignar("C", 100);
+    memoria.asignar("D", 100);
+
+    memoria.liberar("C");
+    memoria.liberar("B");
+
+    expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["A", "", "D"]);
+    expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([100, 200, 100]);
+  });
