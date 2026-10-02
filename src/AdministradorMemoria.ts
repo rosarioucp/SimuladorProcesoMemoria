@@ -46,3 +46,24 @@ constructor(memoriaTotal: number, politica: IElegirBloque, validador: IValidar) 
     const libres = sobrantes.map((sobrante) => this._crearBloque(bloque.getInicio() + tamanio, sobrante, BloqueMemoria.Libre));
     this._reemplazar(bloque, [ocupado, ...libres]);
   }
+  
+  //liberacion y coalescencia de los bloques//
+  public liberar(pid: string): void {
+    this._validador.validarCondicion(this._bloquesDe(pid).length === 1, `${pid} no tiene memoria asignada`);
+    this._bloquesDe(pid).forEach((bloque) => this._liberarBloque(bloque));
+    this._bloques = this._bloques.reduce((resultado: IGuardar[], actual) => this._agregarFusionando(resultado, actual), []);
+  }
+
+  private _liberarBloque(bloque: IGuardar): void {
+    const libre = this._crearBloque(bloque.getInicio(), bloque.getTamanio(), BloqueMemoria.Libre);
+    this._reemplazar(bloque, [libre]);
+  }
+
+  private _agregarFusionando(resultado: IGuardar[], actual: IGuardar): IGuardar[] {
+    const ultimo = resultado.slice(-1);
+    const fusionables = ultimo.filter((bloque) => bloque.estaLibre()).filter(() => actual.estaLibre());
+    const fusionados = fusionables.map((bloque) => this._crearBloque(bloque.getInicio(), bloque.getTamanio() + actual.getTamanio(), BloqueMemoria.Libre));
+    const anteriores = resultado.slice(0, resultado.length - fusionados.length);
+    const sinFusionar = [actual].slice(fusionados.length);
+    return [...anteriores, ...fusionados, ...sinFusionar];
+  }
