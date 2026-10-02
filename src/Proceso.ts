@@ -23,5 +23,33 @@ export class Proceso implements IConsultarProceso{
     this._cpuRestante = cpuTotal;
     this._validador = validador;
   }
+
+  public getPid(): string {
+    return this._pid;
+  }
+
+  public getMemoria(): number {
+    return this._memoria;
+  }
+
+  public getCpuTotal(): number {
+    return this._cpuTotal;
+  }
+
+  public getCpuRestante(): number {
+    return this._cpuRestante;
+  }
+
+  public getEstado(): IEstadoProceso {
+    return this._estado;
+  }
+
+  public getQuantumConsumido(): number {
+    return this._quantumConsumido;
+  }
+
+  public getBloqueoRestante(): number {
+    return this._bloqueoRestante;
+  }
 }
 
