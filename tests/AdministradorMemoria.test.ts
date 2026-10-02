@@ -24,3 +24,35 @@ describe("Asignación de memoria", () => {
     expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([1024]);
     expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["P1"]);
   });
+
+  it("First-Fit selecciona el primer bloque suficiente por dirección", () => {
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), new Validador());
+    memoria.asignar("A", 100);
+    memoria.asignar("B", 100);
+    memoria.asignar("C", 100);
+    memoria.asignar("D", 100);
+    memoria.liberar("A");
+    memoria.liberar("C");
+
+    memoria.asignar("X", 80);
+
+    expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["X", "", "B", "", "D", ""]);
+    expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([80, 20, 100, 100, 100, 624]);
+  });
+  
+ it("RF04: si no hay hueco suficiente falla sin modificar los bloques, aunque la suma de libres alcance", () => {
+    const memoria = new AdministradorMemoria(400, new PoliticaFirstFit(), new Validador());
+    memoria.asignar("A", 100);
+    memoria.asignar("B", 100);
+    memoria.asignar("C", 100);
+    memoria.asignar("D", 100);
+    memoria.liberar("A");
+    memoria.liberar("C");
+
+    const asignado = memoria.asignar("X", 150);
+
+    expect(asignado).toBe(false);
+    expect(memoria.getBloques().map((bloque) => bloque.getPid())).toEqual(["", "B", "", "D"]);
+    expect(memoria.getBloques().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100]);
+  });
+});
