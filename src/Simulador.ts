@@ -88,5 +88,41 @@ constructor(
     this._bloqueados.push(...this._planificador.getBloqueadosDelTick());
   }
 
+  //consultas//
+   public getTick(): number {
+    return this._tick;
+  }
+
+  public getProcesos(): IConsultarProceso[] {
+    return [...this._procesos];
+  }
+
+  public getEnCpu(): IConsultarProceso[] {
+    return this._planificador.getEnCpu();
+  }
+
+  public getListos(): IConsultarProceso[] {
+    return this._planificador.getListos();
+  }
+
+  public getEnEspera(): IConsultarProceso[] {
+    return [...this._enEspera];
+  }
+
+  public getBloqueados(): IConsultarProceso[] {
+    return [...this._bloqueados];
+  }
+
+  public getTerminados(): IConsultarProceso[] {
+    return [...this._terminados];
+  }
+
+  public getMapaMemoria(): IGuardar[] {
+    return this._memoria.getBloques();
+  }
+
+  public getHistorialCpu(): string[] {
+    return this._planificador.getHistorial();
+  }
   
-  
+}
