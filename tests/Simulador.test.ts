@@ -118,3 +118,38 @@ describe("Espera y admite", () => {
   });
 });
 
+describe("Caso 8 - Orden e invariantes (RF06 y RF10)", () => {
+  it("RF06: cada invocación avanza exactamente un tick y ejecuta como máximo un proceso", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 100, 4);
+    simulador.registrarProceso("P2", 100, 4);
+    simulador.avanzarTick();
+
+    expect(simulador.getTick()).toBe(1);
+    expect(simulador.getProcesos().map((proceso) => proceso.getCpuRestante())).toEqual([3, 4]);
+  });
+
+  it("RF06: una liberación al final del tick habilita la admisión recién en el siguiente", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 800, 1);
+    simulador.registrarProceso("P2", 800, 1);
+    simulador.avanzarTick();
+
+    const estadosTick1 = simulador.getProcesos().map((proceso) => proceso.getEstado().getNombre());
+    expect(estadosTick1).toEqual(["Terminado", "Esperando Memoria"]);
+
+    simulador.avanzarTick();
+
+    const estadosTick2 = simulador.getProcesos().map((proceso) => proceso.getEstado().getNombre());
+    expect(estadosTick2).toEqual(["Terminado", "Terminado"]);
+  });
+
+
