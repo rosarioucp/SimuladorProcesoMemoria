@@ -83,5 +83,20 @@ it("RF02: rechaza un proceso que pide más memoria que la total", () => {
     expect(simulador.getProcesos()).toEqual([]);
   });
 
+describe("Espera y admite", () => {
+  it("RF03: admite como Listo al que cabe y deja Esperando Memoria al que no, sin frenar a los de atrás", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
 
+    simulador.registrarProceso("P1", 600, 10);
+    simulador.registrarProceso("P2", 500, 10);
+    simulador.registrarProceso("P3", 300, 10);
+    simulador.avanzarTick();
+
+    const estados = simulador.getProcesos().map((proceso) => proceso.getEstado().getNombre());
+    expect(estados).toEqual(["Ejecutando", "Esperando Memoria", "Listo"]);
+    expect(simulador.getEnEspera().map((proceso) => proceso.getPid())).toEqual(["P2"]);
+  });
 
