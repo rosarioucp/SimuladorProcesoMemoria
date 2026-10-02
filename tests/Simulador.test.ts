@@ -99,4 +99,22 @@ describe("Espera y admite", () => {
     expect(estados).toEqual(["Ejecutando", "Esperando Memoria", "Listo"]);
     expect(simulador.getEnEspera().map((proceso) => proceso.getPid())).toEqual(["P2"]);
   });
+    it("el que proceso que esperaba es admitido cuando se libera memoria, y el Terminado no vuelve a las colas", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 600, 2);
+    simulador.registrarProceso("P2", 500, 1);
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+
+    expect(simulador.getHistorialCpu()).toEqual(["P1", "P1", "P2"]);
+    expect(simulador.getTerminados().map((proceso) => proceso.getPid())).toEqual(["P1", "P2"]);
+    expect(simulador.getListos()).toEqual([]);
+    expect(simulador.getEnEspera()).toEqual([]);
+  });
+});
 
