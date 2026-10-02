@@ -124,5 +124,31 @@ constructor(
   public getHistorialCpu(): string[] {
     return this._planificador.getHistorial();
   }
+ 
   
+ //metricas//
+   public getOcupacionMemoria(): number {
+    return this._calculador.ocupacionMemoria(this._memoria);
+  }
+
+  public getUtilizacionCpu(): number {
+    const ocupados = this.getHistorialCpu().filter((pid) => pid !== PlanificadorRoundRobin.CpuOciosa);
+    return this._calculador.utilizacionCpu(ocupados.length, this._tick);
+  }
+
+  public getCambiosContexto(): number {
+    return this._planificador.getCambiosContexto();
+  }
+
+  public getMemoriaLibreTotal(): number {
+    return this._calculador.memoriaLibreTotal(this._memoria);
+  }
+
+  public getMayorBloqueLibre(): number {
+    return this._calculador.mayorBloqueLibre(this._memoria);
+  }
+
+  public getFragmentacionExterna(): number {
+    return this._calculador.fragmentacionExterna(this._memoria);
+  }
 }
