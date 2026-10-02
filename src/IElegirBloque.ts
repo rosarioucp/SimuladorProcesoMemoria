@@ -1,5 +1,5 @@
 import { IGuardar } from "./IGuardar.js";
 
-export interface ISeleccionarBloque {
+export interface IElegirBloque {
   elegir(bloques: IGuardar[], tamanio: number): IGuardar[];
 }

@@ -36,7 +36,7 @@ constructor(memoriaTotal: number, politica: IElegirBloque, validador: IValidar) 
     this._validador.validarTextoNoVacio(pid, "El PID");
     this._validador.validarEnteroPositivo(tamanio, "El tamaño a asignar");
     this._validador.validarCondicion(this._bloquesDe(pid).length === 0, `${pid} ya tiene memoria asignada`);
-    const elegidos = this._politica.seleccionar(this.getBloques(), tamanio);
+    const elegidos = this._politica.elegir(this.getBloques(), tamanio);
     elegidos.forEach((bloque) => this._ocupar(bloque, pid, tamanio));
     return elegidos.length === 1;
   }
