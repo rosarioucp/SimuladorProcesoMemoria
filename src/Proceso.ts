@@ -25,6 +25,11 @@ export class Proceso implements IConsultarProceso, ICambiarEstado {
     this._cpuRestante = cpuTotal;
     this._validador = validador;
   }
+ private _validarEstado(permitidos: IEstadoProceso[], accion: string): void {
+    const estaPermitido = permitidos.includes(this._estado);
+    const mensaje = `No se puede ${accion} ${this._pid} en estado ${this._estado.getNombre()}`;
+    this._validador.validarCondicion(estaPermitido, mensaje);
+  }
 
 //Consulta sobre los procesos//
   public getPid(): string {
