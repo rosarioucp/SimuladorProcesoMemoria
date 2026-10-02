@@ -8,7 +8,7 @@ import { PoliticaFirstFit } from "../src/PoliticaFirstFit.js";
 import { Simulador } from "../src/Simulador.js";
 import { Validador } from "../src/Validador.js";
 
-describe("Prueba la configuración y registro"), () => {
+describe("Prueba la configuración y registro", () => {
   it("RF01: el estado inicial es tick 0, un único bloque libre, colas vacías y contadores en cero", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
@@ -82,7 +82,7 @@ it("Rechaza un proceso que pide más memoria que la total", () => {
     expect(() => simulador.registrarProceso("P1", 1025, 3)).toThrow("P1 pide más memoria que la memoria total");
     expect(simulador.getProcesos()).toEqual([]);
   });
-
+});
 describe("Espera y admite", () => {
   it("Admite como Listo al que cabe y deja Esperando Memoria al que no, sin frenar a los de atrás", () => {
     const validador = new Validador();
@@ -99,7 +99,8 @@ describe("Espera y admite", () => {
     expect(estados).toEqual(["Ejecutando", "Esperando Memoria", "Listo"]);
     expect(simulador.getEnEspera().map((proceso) => proceso.getPid())).toEqual(["P2"]);
   });
-    it("El que proceso que esperaba es admitido cuando se libera memoria, y el Terminado no vuelve a las colas", () => {
+
+  it("El que proceso que esperaba es admitido cuando se libera memoria, y el Terminado no vuelve a las colas", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -175,6 +176,7 @@ it("Expone tick, proceso en CPU, Listos, en espera, Bloqueados, Terminados y map
     expect(simulador.getMapaMemoria().map((bloque) => bloque.getPid())).toEqual(["", "P2", "P3", "P4", ""]);
     expect(simulador.getMapaMemoria().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100, 600]);
   });
+
 it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en CPU", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(600, new PoliticaFirstFit(), validador);
@@ -204,4 +206,4 @@ it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en C
     });
   });
 });
-}
+
