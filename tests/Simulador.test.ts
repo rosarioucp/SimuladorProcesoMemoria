@@ -73,7 +73,7 @@ describe("Prueba la configuración y registro"), () => {
     expect(simulador.getProcesos().length).toBe(1);
   });
 
-it("RF02: rechaza un proceso que pide más memoria que la total", () => {
+it("Rechaza un proceso que pide más memoria que la total", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -84,7 +84,7 @@ it("RF02: rechaza un proceso que pide más memoria que la total", () => {
   });
 
 describe("Espera y admite", () => {
-  it("RF03: admite como Listo al que cabe y deja Esperando Memoria al que no, sin frenar a los de atrás", () => {
+  it("Admite como Listo al que cabe y deja Esperando Memoria al que no, sin frenar a los de atrás", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -99,7 +99,7 @@ describe("Espera y admite", () => {
     expect(estados).toEqual(["Ejecutando", "Esperando Memoria", "Listo"]);
     expect(simulador.getEnEspera().map((proceso) => proceso.getPid())).toEqual(["P2"]);
   });
-    it("el que proceso que esperaba es admitido cuando se libera memoria, y el Terminado no vuelve a las colas", () => {
+    it("El que proceso que esperaba es admitido cuando se libera memoria, y el Terminado no vuelve a las colas", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -118,7 +118,7 @@ describe("Espera y admite", () => {
   });
 });
 
-describe("Caso 8 - Orden e invariantes (RF06 y RF10)", () => {
+describe("Orden e invariantes", () => {
   it("RF06: cada invocación avanza exactamente un tick y ejecuta como máximo un proceso", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
@@ -133,7 +133,7 @@ describe("Caso 8 - Orden e invariantes (RF06 y RF10)", () => {
     expect(simulador.getProcesos().map((proceso) => proceso.getCpuRestante())).toEqual([3, 4]);
   });
 
-  it("RF06: una liberación al final del tick habilita la admisión recién en el siguiente", () => {
+  it("La liberación al final del tick habilita la admisión recién en el siguiente", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -151,5 +151,27 @@ describe("Caso 8 - Orden e invariantes (RF06 y RF10)", () => {
     const estadosTick2 = simulador.getProcesos().map((proceso) => proceso.getEstado().getNombre());
     expect(estadosTick2).toEqual(["Terminado", "Terminado"]);
   });
+it("Expone tick, proceso en CPU, Listos, en espera, Bloqueados, Terminados y mapa de memoria", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
 
+    simulador.registrarProceso("P1", 100, 1);
+    simulador.registrarProcesoConES("P2", 100, 5, 1, 9);
+    simulador.registrarProceso("P3", 100, 9);
+    simulador.registrarProceso("P4", 100, 9);
+    simulador.registrarProceso("P5", 900, 9);
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+    simulador.avanzarTick();
 
+    expect(simulador.getTick()).toBe(3);
+    expect(simulador.getEnCpu().map((proceso) => proceso.getPid())).toEqual(["P3"]);
+    expect(simulador.getListos().map((proceso) => proceso.getPid())).toEqual(["P4"]);
+    expect(simulador.getEnEspera().map((proceso) => proceso.getPid())).toEqual(["P5"]);
+    expect(simulador.getBloqueados().map((proceso) => proceso.getPid())).toEqual(["P2"]);
+    expect(simulador.getTerminados().map((proceso) => proceso.getPid())).toEqual(["P1"]);
+    expect(simulador.getMapaMemoria().map((bloque) => bloque.getPid())).toEqual(["", "P2", "P3", "P4", ""]);
+    expect(simulador.getMapaMemoria().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100, 600]);
+  });
