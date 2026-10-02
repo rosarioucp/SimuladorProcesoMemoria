@@ -3,5 +3,5 @@ export interface IGuardar {
   getTamanio(): number;
   getPid(): string;
   estaLibre(): boolean;
-  puedeAlojar(tamanio: number): boolean;
+  puedeGuardar(tamanio: number): boolean;
 }

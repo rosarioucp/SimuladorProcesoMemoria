@@ -15,4 +15,24 @@ export class BloqueMemoria implements IGuardar {
     this._tamanio = tamanio;
     this._pid = pid;
   }
+public getInicio(): number {
+    return this._inicio;
+  }
+
+  public getTamanio(): number {
+    return this._tamanio;
+  }
+
+  public getPid(): string {
+    return this._pid;
+  }
+
+  public estaLibre(): boolean {
+    return this._pid === BloqueMemoria.Libre;
+  }
+
+  public puedeGuardar(tamanio: number): boolean {
+    const condiciones = [this.estaLibre(), this._tamanio >= tamanio];
+    return condiciones.every((condicion) => condicion);
+  }
 }
