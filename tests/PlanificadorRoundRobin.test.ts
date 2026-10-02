@@ -27,3 +27,37 @@ describe("Round Robin", () => {
   });
 });
 
+describe("Quantum y finalización", () => {
+  it("Un unico proceso renueva su quantum sin cambio de contexto", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 100, 5);
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+
+    expect(planificador.getHistorial()).toEqual(["P1", "P1", "P1", "P1", "P1"]);
+    expect(planificador.getCambiosContexto()).toBe(0);
+  });
+
+  it("Finalizar en el límite del quantum no vuelve el proceso a la cola", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(2, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProceso("P1", 100, 2);
+    simulador.registrarProceso("P2", 100, 1);
+    simulador.avanzarTick();
+    simulador.avanzarTick();
+
+    expect(simulador.getTerminados().map((proceso) => proceso.getPid())).toEqual(["P1"]);
+    expect(planificador.getListos().map((proceso) => proceso.getPid())).toEqual(["P2"]);
+    expect(planificador.getCambiosContexto()).toBe(0);
+  });
+});
