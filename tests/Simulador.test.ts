@@ -152,7 +152,8 @@ describe("Orden e invariantes", () => {
     const estadosTick2 = simulador.getProcesos().map((proceso) => proceso.getEstado().getNombre());
     expect(estadosTick2).toEqual(["Terminado", "Terminado"]);
   });
-it("Expone tick, proceso en CPU, Listos, en espera, Bloqueados, Terminados y mapa de memoria", () => {
+
+  it("Expone tick, proceso en CPU, Listos, en espera, Bloqueados, Terminados y mapa de memoria", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1000, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -177,7 +178,7 @@ it("Expone tick, proceso en CPU, Listos, en espera, Bloqueados, Terminados y map
     expect(simulador.getMapaMemoria().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100, 600]);
   });
 
-it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en CPU", () => {
+  it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en CPU", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(600, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
