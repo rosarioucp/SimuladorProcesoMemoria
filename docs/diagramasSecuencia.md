@@ -56,14 +56,14 @@ sequenceDiagram
     R->>P: renovarQuantum()
     Note right of P: sigue en Ejecutando
   end
-  ```
-
-```mermaid
+ 
   S->>R: getTerminadosDelTick()
   R-->>S: procesos terminados
   S->>M: liberar(pid)
   Note right of M: libera el bloque y fusiona los libres vecinos
 
+   ```
+```mermaid
   sequenceDiagram
   title Bloqueo y retorno por E/S (RF08)
   participant S as Simulador
