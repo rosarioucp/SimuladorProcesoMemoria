@@ -29,7 +29,7 @@ describe("Proceso, sus transiciones y contadores", () => {
     const proceso = new Proceso("P1", 100, 2, new Validador());
 
     expect(() => proceso.ejecutarTick()).toThrow("No se puede ejecutar P1 en estado Nuevo");
-    expect(() => proceso.asignarCpu()).toThrow("No se puede asignar CPU a P1 en estado Nuevo");
+    expect(() => proceso.asignarCpu()).toThrow("No se puede asignar CPU P1 en estado Nuevo");
     expect(() => proceso.finalizar()).toThrow("No se puede finalizar P1 en estado Nuevo");
     expect(proceso.getEstado().getNombre()).toBe("Nuevo");
     expect(proceso.getCpuRestante()).toBe(2);
@@ -43,7 +43,7 @@ describe("Proceso, sus transiciones y contadores", () => {
     proceso.finalizar();
 
     expect(() => proceso.admitir()).toThrow("No se puede admitir P1 en estado Terminado");
-    expect(() => proceso.asignarCpu()).toThrow("No se puede asignar CPU a P1 en estado Terminado");
+    expect(() => proceso.asignarCpu()).toThrow("No se puede asignar CPU P1 en estado Terminado");
     expect(() => proceso.ejecutarTick()).toThrow("No se puede ejecutar P1 en estado Terminado");
     expect(proceso.getEstado().getNombre()).toBe("Terminado");
   });
