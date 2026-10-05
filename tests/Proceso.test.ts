@@ -25,8 +25,31 @@ describe("Proceso, sus transiciones y contadores", () => {
     expect(proceso.getEstado().getNombre()).toBe("Terminado");
     expect(proceso.getCpuRestante()).toBe(0);
   });
+   it("Rechaza las acciones que no corresponden a su estado y no cambia sus datos", () => {
+    const proceso = new Proceso("P1", 100, 2, new Validador());
 
-  
+    expect(() => proceso.ejecutarTick()).toThrow("No se puede ejecutar P1 en estado Nuevo");
+    expect(() => proceso.asignarCpu()).toThrow("No se puede asignar la CPU a P1 en estado Nuevo");
+    expect(() => proceso.finalizar()).toThrow("No se puede finalizar P1 en estado Nuevo");
+    expect(proceso.getEstado().getNombre()).toBe("Nuevo");
+    expect(proceso.getCpuRestante()).toBe(2);
+  });
+
+  it("Un proceso Terminado rechaza cualquier acción", () => {
+    const proceso = new Proceso("P1", 100, 1, new Validador());
+    proceso.admitir();
+    proceso.asignarCpu();
+    proceso.ejecutarTick();
+    proceso.finalizar();
+
+    expect(() => proceso.admitir()).toThrow("No se puede admitir P1 en estado Terminado");
+    expect(() => proceso.asignarCpu()).toThrow("No se puede asignar la CPU a P1 en estado Terminado");
+    expect(() => proceso.ejecutarTick()).toThrow("No se puede ejecutar P1 en estado Terminado");
+    expect(proceso.getEstado().getNombre()).toBe("Terminado");
+  });
+});
+
+
 describe("Bloquearse por E/S", () => {
   it("Al bloquearse libera la CPU, conserva la memoria y cuenta un cambio de contexto", () => {
     const validador = new Validador();
