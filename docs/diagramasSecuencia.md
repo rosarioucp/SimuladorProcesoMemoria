@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
   title Admisión y asignación de memoria (RF03 y RF04)
   actor Usuario
@@ -24,7 +25,9 @@ sequenceDiagram
     S->>P: esperarMemoria()
     Note right of P: queda en Esperando Memoria
   end
+  ```
 
+```mermaid
   sequenceDiagram
   title Un tick de Round Robin (RF06 y RF07)
   participant S as Simulador
@@ -53,7 +56,9 @@ sequenceDiagram
     R->>P: renovarQuantum()
     Note right of P: sigue en Ejecutando
   end
+  ```
 
+```mermaid
   S->>R: getTerminadosDelTick()
   R-->>S: procesos terminados
   S->>M: liberar(pid)
@@ -89,4 +94,4 @@ sequenceDiagram
   S->>P: desbloquear()
   Note right of P: vuelve a Listo
   S->>R: encolar(proceso)
-  
+  ```
