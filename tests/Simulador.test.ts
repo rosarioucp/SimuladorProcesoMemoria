@@ -178,7 +178,7 @@ describe("Orden e invariantes", () => {
     expect(simulador.getMapaMemoria().map((bloque) => bloque.getTamanio())).toEqual([100, 100, 100, 100, 600]);
   });
 
-  it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en CPU", () => {
+    it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en CPU", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(600, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -205,6 +205,7 @@ describe("Orden e invariantes", () => {
       expect(ubicados.sort()).toEqual(["P1", "P2", "P3"]);
       expect(inicios).toEqual([0, ...finales.slice(0, -1)]);
     });
+  });
 
   it("La admisión va antes que los bloqueados: el admitido queda delante del que vuelve de E/S", () => {
     const validador = new Validador();
