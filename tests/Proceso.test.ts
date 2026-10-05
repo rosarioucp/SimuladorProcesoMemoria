@@ -1,3 +1,4 @@
+import { Proceso } from "../src/Proceso.js";
 import { describe, expect, it } from "vitest";
 import { AdministradorMemoria } from "../src/AdministradorMemoria.js";
 import { CalculadorMetricas } from "../src/CalculadorMetricas.js";
@@ -6,6 +7,26 @@ import { PoliticaFirstFit } from "../src/PoliticaFirstFit.js";
 import { Simulador } from "../src/Simulador.js";
 import { Validador } from "../src/Validador.js";
 
+describe("Proceso, sus transiciones y contadores", () => {
+  it("Recorre el ciclo de vida de Nuevo a Terminado y actualiza su contador", () => {
+    const proceso = new Proceso("P1", 100, 2, new Validador());
+
+    proceso.admitir();
+    proceso.asignarCpu();
+    proceso.ejecutarTick();
+
+    expect(proceso.getEstado().getNombre()).toBe("Ejecutando");
+    expect(proceso.getCpuRestante()).toBe(1);
+    expect(proceso.getQuantumConsumido()).toBe(1);
+
+    proceso.ejecutarTick();
+    proceso.finalizar();
+
+    expect(proceso.getEstado().getNombre()).toBe("Terminado");
+    expect(proceso.getCpuRestante()).toBe(0);
+  });
+
+  
 describe("Bloquearse por E/S", () => {
   it("Al bloquearse libera la CPU, conserva la memoria y cuenta un cambio de contexto", () => {
     const validador = new Validador();
