@@ -207,7 +207,7 @@ describe("Orden e invariantes", () => {
     });
   });
 
-  it("La admisión va antes que los bloqueados: el admitido queda delante del que vuelve de E/S", () => {
+   it("La admisión va antes que los bloqueados: el admitido queda delante del que vuelve de E/S", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(5, validador);
@@ -222,6 +222,4 @@ describe("Orden e invariantes", () => {
     expect(simulador.getEnCpu().map((proceso) => proceso.getPid())).toEqual(["P2"]);
     expect(simulador.getListos().map((proceso) => proceso.getPid())).toEqual(["P3", "P1"]);
   });
-  });
 });
-
