@@ -205,7 +205,7 @@ it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en C
       expect(inicios).toEqual([0, ...finales.slice(0, -1)]);
     });
 
-    it("La admisión va antes que los bloqueados: el admitido queda delante del que vuelve de E/S", () => {
+  it("La admisión va antes que los bloqueados: el admitido queda delante del que vuelve de E/S", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(5, validador);
