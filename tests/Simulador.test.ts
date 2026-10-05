@@ -9,7 +9,7 @@ import { Simulador } from "../src/Simulador.js";
 import { Validador } from "../src/Validador.js";
 
 describe("Prueba la configuración y registro", () => {
-  it("RF01: el estado inicial es tick 0, un único bloque libre, colas vacías y contadores en cero", () => {
+  it("el estado inicial es tick 0, un único bloque libre, colas vacías y contadores en cero", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -49,7 +49,7 @@ describe("Prueba la configuración y registro", () => {
     expect(procesos.map((proceso) => proceso.getEstado().getNombre())).toEqual(["Nuevo"]);
   });
 
-   it("RF02: rechaza los datos inválidos de un proceso", () => {
+   it("rechaza los datos inválidos de un proceso", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -120,7 +120,7 @@ describe("Espera y admite", () => {
 });
 
 describe("Orden e invariantes", () => {
-  it("RF06: cada invocación avanza exactamente un tick y ejecuta como máximo un proceso", () => {
+  it("cada invocación avanza exactamente un tick y ejecuta como máximo un proceso", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -204,6 +204,22 @@ it("Nunca hay procesos duplicados, solapamientos de memoria ni dos procesos en C
       expect(ubicados.sort()).toEqual(["P1", "P2", "P3"]);
       expect(inicios).toEqual([0, ...finales.slice(0, -1)]);
     });
+
+    it("La admisión va antes que los bloqueados: el admitido queda delante del que vuelve de E/S", () => {
+    const validador = new Validador();
+    const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
+    const planificador = new PlanificadorRoundRobin(5, validador);
+    const simulador = new Simulador(memoria, planificador, new CalculadorMetricas(), validador);
+
+    simulador.registrarProcesoConES("P1", 100, 3, 1, 1);
+    simulador.registrarProceso("P2", 100, 5);
+    simulador.avanzarTick();
+    simulador.registrarProceso("P3", 100, 5);
+    simulador.avanzarTick();
+
+    expect(simulador.getEnCpu().map((proceso) => proceso.getPid())).toEqual(["P2"]);
+    expect(simulador.getListos().map((proceso) => proceso.getPid())).toEqual(["P3", "P1"]);
+  });
   });
 });
 
