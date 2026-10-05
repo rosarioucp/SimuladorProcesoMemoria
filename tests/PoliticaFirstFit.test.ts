@@ -17,3 +17,15 @@ describe("Politica First Fit", () => {
 
     expect(elegidos.map((bloque) => bloque.getInicio())).toEqual([150]);
   });
+    it("Devuelve una lista vacía cuando ningún bloque libre alcanza", () => {
+    const validador = new Validador();
+    const bloques = [
+      new BloqueMemoria(0, 50, BloqueMemoria.Libre, validador),
+      new BloqueMemoria(50, 100, "P1", validador),
+    ];
+
+    const elegidos = new PoliticaFirstFit().elegir(bloques, 80);
+
+    expect(elegidos).toEqual([]);
+  });
+});
