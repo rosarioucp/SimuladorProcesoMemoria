@@ -97,10 +97,10 @@ classDiagram
 
   class IElegirBloque {
     <<interface>>
-    +seleccionar(bloques: IGuardar[], tamanio: number) IGuardar[]
+    +elegir(bloques: IGuardar[], tamanio: number) IGuardar[]
   }
   class PoliticaFirstFit {
-    +seleccionar(bloques: IGuardar[], tamanio: number) IGuardar[]
+    +elegir(bloques: IGuardar[], tamanio: number) IGuardar[]
   }
 
   class IConsultarMemoria {
