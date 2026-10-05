@@ -49,7 +49,7 @@ describe("Prueba la configuración y registro", () => {
     expect(procesos.map((proceso) => proceso.getEstado().getNombre())).toEqual(["Nuevo"]);
   });
 
-   it("rechaza los datos inválidos de un proceso", () => {
+   it("Rechaza los datos inválidos de un proceso", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
@@ -120,7 +120,7 @@ describe("Espera y admite", () => {
 });
 
 describe("Orden e invariantes", () => {
-  it("cada invocación avanza exactamente un tick y ejecuta como máximo un proceso", () => {
+  it("Cada invocación avanza exactamente un tick y ejecuta como máximo un proceso", () => {
     const validador = new Validador();
     const memoria = new AdministradorMemoria(1024, new PoliticaFirstFit(), validador);
     const planificador = new PlanificadorRoundRobin(2, validador);
